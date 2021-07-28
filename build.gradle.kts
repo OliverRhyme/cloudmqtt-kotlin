@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.5.21"
 }
 
-group = "com.techplorations"
+group = "com.coldfire"
 version = "0.0.1"
 
 repositories {
