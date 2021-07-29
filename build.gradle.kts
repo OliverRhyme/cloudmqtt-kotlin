@@ -2,9 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.5.21"
+    `maven-publish`
 }
 
-group = "com.coldfire"
+group = "com.github.OliverRhyme"
 version = "0.0.1"
 
 repositories {
