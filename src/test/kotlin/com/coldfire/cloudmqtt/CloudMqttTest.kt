@@ -1,7 +1,8 @@
+package com.coldfire.cloudmqtt
+
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.MockEngineConfig
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.features.auth.Auth
 import io.ktor.client.features.auth.providers.BasicAuthCredentials
@@ -13,18 +14,9 @@ import io.ktor.http.Url
 import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.http.hostWithPort
-import io.ktor.http.toURI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 
 @ExperimentalCoroutinesApi
 class CloudMqttTest {
@@ -32,7 +24,7 @@ class CloudMqttTest {
     private val Url.hostWithPortIfRequired: String get() = if (port == protocol.defaultPort) host else hostWithPort
     private val Url.fullUrl: String get() = "${protocol.name}://$hostWithPortIfRequired$fullPath"
 
-    private val testApiKey = "asfdkasfnmlkasmfef351561";
+    private val testApiKey = "asfdkasfnmlkasmfef351561"
 
     private val client = HttpClient(MockEngine) {
         engine {
@@ -43,10 +35,12 @@ class CloudMqttTest {
                         val responseHeaders =
                             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
 
-                        val user = jacksonObjectMapper().writeValueAsString(CloudMqttUser(
+                        val user = jacksonObjectMapper().writeValueAsString(
+                            CloudMqttUser(
                             "test",
                             acls = listOf()
-                        ))
+                        )
+                        )
                         respond(user, headers = responseHeaders)
                     }
                     else -> error("Unhandled ${request.url.fullUrl}")
