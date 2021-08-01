@@ -1,5 +1,7 @@
 package com.coldfire.cloudmqtt
 
+import com.coldfire.cloudmqtt.model.CloudMqttACL
+import com.coldfire.cloudmqtt.model.CloudMqttUser
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -9,6 +11,7 @@ import io.ktor.client.features.auth.providers.BasicAuthCredentials
 import io.ktor.client.features.auth.providers.basic
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import io.ktor.http.Url
 import io.ktor.http.fullPath
@@ -37,11 +40,19 @@ class CloudMqttTest {
 
                         val user = jacksonObjectMapper().writeValueAsString(
                             CloudMqttUser(
-                            "test",
-                            acls = listOf()
-                        )
+                                "test",
+                                acls = listOf()
+                            )
                         )
                         respond(user, headers = responseHeaders)
+                    }
+                    "https://api.cloudmqtt.com/api/acl" -> {
+                        val responseHeaders =
+                            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+
+                        val body = (request.body as TextContent).text
+
+                        respond(body, headers = responseHeaders)
                     }
                     else -> error("Unhandled ${request.url.fullUrl}")
                 }
@@ -65,11 +76,25 @@ class CloudMqttTest {
     private val cloudMqtt = CloudMqtt(client)
 
 
-
     @Test
     fun testGetUserInfo() = runBlocking {
         val userInfo = cloudMqtt.getUserInfo("test")
 
         assert(userInfo.username == "test")
     }
+
+//    @Test
+//    fun testCreateACL() = runBlocking {
+//        val test = cloudMqtt.createAclRule(
+//            ACLType.PATTERN,
+//            "test",
+//            CloudMqttACL(
+//                pattern = "test/#",
+//                read = true,
+//                write = true
+//            )
+//        )
+//
+//
+//    }
 }
